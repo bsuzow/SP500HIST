@@ -105,9 +105,10 @@ p3
 ## Plot 4 - What would happen to a $100 investment?
 
 Let's suppose that $100 were invested on Jan 1, 1928 in these 3 types of securities. The balances at the end of 2017 are:
-
+"
 ```{r}
 df = data.frame(sp500$StkBal,sp500$TblBal,sp500$TbnBal)
+names(df) = c("SP500","T-Bills","T-Bonds")
 round(sapply(df,max),2)
 
 ```
