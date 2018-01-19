@@ -18,7 +18,7 @@ The purpose of this report is to plot [the S&P500 Index Fund](https://en.wikiped
 ***
 ## Data load and preparation
 
-Two sheets from the excel file contributed by [Prof. Damodaran](http://pages.stern.nyu.edu/~adamodar/) downloaded and utilized for the plots. 
+Two sheets from the excel file contributed by [Prof. Damodaran](http://pages.stern.nyu.edu/~adamodar/) are utilized for the plots. 
 
 ```{r, message=FALSE}
 library(xlsx)
