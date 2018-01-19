@@ -1,0 +1,143 @@
+---
+title: "S&P 500 Performance"
+author: "Bo Suzow"
+date: "January 18, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+The purpose of this report is to plot [the S&P500 Index Fund](https://en.wikipedia.org/wiki/S%26P_500_Index) performance. 
+
+[(Data source)](http://www.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xls)
+
+***
+## Data load and preparation
+
+Two sheets from the excel file contributed by [Prof. Damodaran](http://pages.stern.nyu.edu/~adamodar/) downloaded and utilized for the plots. 
+
+```{r, message=FALSE}
+library(xlsx)
+library(dplyr)
+library(data.table)
+library(ggplot2)
+library(plotly)
+
+download.file("http://www.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xls","histretSP.xls", mode="wb")
+
+sp500sum= read.xlsx("histretSP.xls", header=FALSE, startRow=19, endRow=108, 
+                  sheetName="Returns by year")
+sp500raw= read.xlsx("histretSP.xls", header=TRUE, startRow=2, endRow=93, 
+                  sheetName="S&P 500 & Raw Data")
+
+names(sp500sum)= c("Year","sp500Rtn","TblRtn","TbnRtn","StkBal","TblBal",
+                   "TbnBal","diff.S-Tbl","diff.S-Tbn","HRP")
+
+# StkBal: the bal on the investment of $100 on stocks
+# TblBal: the bal on the investment of $100 on 3-month T-bills
+# TbnBal: the bal on the investment of $100 on 10-year T-bonds
+# HRP: historical Risk premium
+
+sp500raw$Jan.1.notes=NULL  # remove Jan.1.notes column
+setnames(sp500raw,"S.P.500","sp500" )  # change the sp500 col name
+
+# merge the two DFs
+
+sp500 = merge(sp500raw, sp500sum, by="Year")
+
+sp500 = sp500 %>% mutate(Year = ts(Year))
+sp500 = sp500 %>% mutate(sp500Rtn.pct = round(sp500Rtn*100,2))
+sp500 = sp500 %>% mutate(TblRtn.pct   = round(TblRtn*100,2))
+sp500 = sp500 %>% mutate(TbnRtn.pct   = round(TbnRtn*100,2))
+```
+
+***
+## Plot 1 - S&P500, 3-month T-Bill and 10-year T-Bond Return Rate Comparison
+
+```{r}
+sp500Rtn = sp500 %>% select(Year,sp500Rtn, TblRtn, TbnRtn)
+
+pal = c("blue","red","purple")  # does not have an effect
+
+p1 = plot_ly(sp500Rtn,x=~Year, y=~sp500Rtn, name="S&P500",type="scatter",mode="lines", colors=pal) %>%
+   add_trace(y=~TblRtn, name="3-mth T-Bill", mode="lines") %>%
+   add_trace(y=~TbnRtn, name="10-yr T-Bond", mode="lines")
+p1
+
+```
+
+***
+## Plot 2 - S&P 500 Index from 1928 through 2017
+
+
+```{r}
+
+ylabel = list(title="S&P 500 Index")
+
+p2 = plot_ly(sp500,x=~Year, y=~sp500,
+             text= ~paste("Year: ",as.character(Year),"<br>Index: ",
+                          sp500,"<br>Return: ",sp500Rtn.pct,"%", sep=""),
+             type="scatter",mode="lines") %>%
+
+             plotly::layout(yaxis = ylabel)
+p2
+```
+
+***
+## Plot 3 - S&P 500, T-Bill and B-bond Return Rate Boxplot
+
+```{r}
+ylabel = list(title="Percentage")
+p3 = plot_ly(sp500, y=~sp500Rtn.pct,
+             name="S&P500",type="box") %>%
+     add_trace(y=~TblRtn.pct,name="T-Bill") %>%
+     add_trace(y=~TbnRtn.pct,name="T-Bond") %>%
+     plotly::layout(yaxis = ylabel)
+   
+p3
+```
+
+***
+## Plot 4 - What would happen to a $100 investment?
+
+Let's suppose that $100 were invested on Jan 1, 1928 in these 3 types of securities. The balances at the end of 2017 are:
+
+```{r}
+df = data.frame(sp500$StkBal,sp500$TblBal,sp500$TbnBal)
+round(sapply(df,max),2)
+
+```
+
+The investment in S&P 500 would grow to almost $400K, in comparison with $2K in T-Bills and $7.3K in T-Bonds.
+
+```{r}
+
+sp500Rtn = sp500 %>% select(Year,sp500Rtn, TblRtn, TbnRtn)
+
+ylabel = list(title="Log2($$)")
+
+p4 = plot_ly(sp500,x=~Year, y=~log2(StkBal),
+             name="S&P500",
+             text= ~paste("Year: ",as.character(Year),
+                          "<br>SP500: $", round(StkBal,2),
+                          "<br>T-Bill: $",round(TblBal,2),
+                          "<br>T-Bond: $",round(TbnBal,2), sep=""),
+             type="scatter",mode="lines", colors=pal)  %>%
+     add_trace(y=~log2(TblBal), name="T-Bill", mode="lines") %>%  
+     add_trace(y=~log2(TbnBal), name="T-Bond", mode="lines") %>%
+     plotly::layout(yaxis = ylabel)
+p4
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
