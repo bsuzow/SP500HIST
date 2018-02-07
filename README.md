@@ -7,3 +7,5 @@ Two sheets from the excel file contributed by Prof. Damodaran are utilized for t
 [Data source](http://www.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xls","histretSP.xls)
 
 [Prof. Damodaran's Website](http://pages.stern.nyu.edu/~adamodar/)
+
+For an interactive version with a slider, click [here](http://www.tinyurl.com/bsuzow/SP500_Performance)
