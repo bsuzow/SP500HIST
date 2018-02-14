@@ -6,6 +6,9 @@
 # 
 #    http://shiny.rstudio.com/
 #
+# BYS 2.7.18
+# The server.R for the SP500 Index Performance Shiny app.
+
 
 library(shiny)
 
@@ -58,6 +61,7 @@ shinyServer(function(input, output) {
       
    })
    
+  
    # compose the note on tab4
    
    max.df = reactive({
@@ -95,7 +99,12 @@ shinyServer(function(input, output) {
       
       pal = c("blue","red","purple")  # does not have an effect
       
-      p1 = plot_ly(sp500Rtn,x=~Year, y=~sp500Rtn, name="S&P500",type="scatter",
+      p1 = plot_ly(sp500Rtn,x=~Year, y=~sp500Rtn, name="S&P500",
+                   text= ~paste("<br>Year: ",as.character(Year),
+                                "<br>SP500: ", round(sp500Rtn*100,2),"%",
+                                "<br>T-Bill: ",round(TblRtn*100,2),"%",
+                                "<br>T-Bond: ",round(TbnRtn*100,2),"%", sep=""),
+                   type="scatter",
                    mode="lines", colors=pal) %>%
          add_trace(y=~TblRtn, name="3-mth T-Bill", mode="lines") %>%
          add_trace(y=~TbnRtn, name="10-yr T-Bond", mode="lines")

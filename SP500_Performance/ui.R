@@ -6,6 +6,10 @@
 # 
 #    http://shiny.rstudio.com/
 #
+# BYS 2.7.18
+# The UI for the SP500 Index Performance Shiny app.
+# 4-tab construct in the main panel.
+
 
 library(shiny)
 
@@ -32,7 +36,7 @@ shinyUI(fluidPage(
        br(),
        hr(),
        
-       h4("Please enter a start year"),
+       h4("Please choose a start year in the slider below"),
        sliderInput("syear",
                    "Start Year:",
                    min = 1928,
@@ -62,29 +66,41 @@ shinyUI(fluidPage(
                    
                    tabPanel("S&P500 vs Risk-free",
                             br(),
+                            tags$h5("Hover for details"),
                            # htmlOutput("html1"),
-                           # hr(),
+                            hr(),
                             plotly::plotlyOutput("sp500Rtn")
+                            
                    ), # tabPanel - SP500 vs RF
                    
                    tabPanel("S&P500 Index Performance",
                             br(),
+                            tags$h5("Hover for details"),
                            # htmlOutput("html2"),
-                           # hr(),
+                            hr(),
                             plotly::plotlyOutput("sp500Idx")
                             
                    ), # tabPanel - SP500 index perf
                    
                    tabPanel("S&P 500 Index vs Risk-free Boxplot",
                             br(),
+                            tags$h5("Hover for details"),
+                            
+                            #tags$p("If you are not familiar with boxplots,"),
+                            tags$a(href="http://www.physics.csbsju.edu/stats/box2.html",
+                                             "Click here if not familiar with boxplots."),
+                            
                            # htmlOutput("html3"),
-                           # hr(),
+                           
+                            hr(),
                             plotly::plotlyOutput("sp500Box")   
                            
                             
                    ), # tablPanel - SP500 vs RF boxplot
                    
                    tabPanel("$100 invested in 1928",
+                            br(),
+                            tags$h5("Hover for details"),
                             br(),
                             htmlOutput("sp500_100USD"),
                             hr(),
